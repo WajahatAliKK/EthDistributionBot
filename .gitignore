@@ -1,2 +1,14 @@
 .env
 alembic.ini
+bot/__pycache__/db_client.cpython-310.pyc
+bot/__pycache__/wallet_manager.cpython-310.pyc
+bot/handlers/__pycache__/handlers.cpython-310.pyc
+bot/keyboards/__pycache__/btn.cpython-310.pyc
+bot/messages/__pycache__/messages.cpython-310.pyc
+bot/Middlewares/__pycache__/user_middleware.cpython-310.pyc
+bot/wallets/__pycache__/wallet_handlers.cpython-310.pyc
+database/__pycache__/clinet.cpython-310.pyc
+database/__pycache__/database.cpython-310.pyc
+database/__pycache__/models.cpython-310.pyc
+database/__pycache__/user_functions.cpython-310.pyc
+database/__pycache__/wallet_functions.cpython-310.pyc
