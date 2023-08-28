@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from database.models import User, Wallet
+from database.models import Users as User, Wallets as Wallet    
 from database.user_functions import get_user_by_chat_id
 from typing import Optional
 from aiogram import types
@@ -20,15 +20,12 @@ async def add_wallet(user_data: types.User, wallet_data, db) -> Optional[Wallet]
         )
         user = result.scalar_one_or_none()
         
-        active = True if "Main" in wallet_data['name'] else False
         if user:
             wallet = Wallet(
                 user_id = user.id,
-                name = wallet_data['name'],
                 wallet_address=wallet_data['address'],
                 wallet_encrypted_seed=wallet_data['encrypted_seed'],
-                active = active,
-                network = wallet_data['network']
+                network_id = 1
             )
             
             
@@ -46,10 +43,10 @@ async def get_active_wallets(user_data: types.User, db) -> Optional[Wallet]:
         user = result.scalar_one_or_none()
         result = await session.execute(
             select(Wallet).where(
-                (Wallet.user_id == user.id) & (Wallet.active == True)
+                (Wallet.user_id == user.id)
                 )
         )
-        wallets = result.scalars().all()
+        wallets = result.scalar_one_or_none()
         return wallets
     
 
@@ -121,7 +118,7 @@ async def view_wallets(user_data: types.User, network: str, db) -> List[Wallet]:
     
 
 
-async def delete_wallet_by_name(name, user_data: types.User, network: str, db):
+async def delete_wallet_by_name(user_data: types.User, db):
     async with db.AsyncSession() as session:
         result = await session.execute(
             select(User).where(User.chat_id == user_data.id)
@@ -129,28 +126,11 @@ async def delete_wallet_by_name(name, user_data: types.User, network: str, db):
         user = result.scalar_one_or_none()
         result = await session.execute(
             select(Wallet).where(
-                (Wallet.user_id == user.id) & (Wallet.network == network.lower()) & (Wallet.name == name)
+                (Wallet.user_id == user.id)
             )
         )
         
         target_wallet = result.scalar_one_or_none()
-        result = await session.execute(
-            select(Wallet).where(
-                (Wallet.user_id == user.id) & (Wallet.network == network.lower())
-            )
-        )
-        wallets = result.scalars().all()
-        if target_wallet.name == "Main":    
-            if not wallets or len(wallets) != 2:
-                pass
-            else:
-                for wallet in wallets:
-                    if wallet.name!="Main":
-                        wallet.name = "Main"
-        if target_wallet.active:
-            for wallet in wallets:
-                if not wallet.active:
-                    wallet.active = True
         
         await session.delete(target_wallet)
         await session.commit()

@@ -18,7 +18,23 @@ class Users(Base):
     holds_token = Column(Boolean, nullable=False, default=False)
 
     wallets = relationship('Wallets', back_populates='user')
-  
+    
+    @classmethod
+    def get_user(cls, user_id, session):
+        return session.query(cls).filter(cls.chat_id == user_id).one_or_none()
+    
+    @classmethod
+    def has_wallet(cls, user_id: int, session, network=None) -> bool:
+        user = cls.get_user(user_id, session)
+        
+        if user and user.wallets:
+            for wallet in user.wallets:
+                if network:
+                    if wallet.network.lower() == network.lower():
+                        return True
+                else:
+                    return True
+        return False
 
 
 class Swaps(Base):

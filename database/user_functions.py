@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from database.models import User
+from database.models import Users as User
 from typing import Optional
 from aiogram import types
 from bot.db_client import db
@@ -17,15 +17,13 @@ async def get_user_by_chat_id(chat_id, session):
         user = result.scalar_one_or_none()
         return user
 
-async def add_user(user_data: types.User, db: db) -> User:
+async def add_user(user_data: types.User, db) -> User:
     user = User(
         username=user_data.username,
         chat_id=user_data.id,
         is_active=True,
-        paid=False,
         joined_channel=False,
         holds_token=False,
-        premium = False
     )
     async with db.AsyncSession() as session:
         session.add(user)
