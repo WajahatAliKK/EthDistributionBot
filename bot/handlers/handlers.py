@@ -8,6 +8,9 @@ from database.wallet_functions import user_has_wallet, add_wallet, delete_wallet
 from bot.messages.messages import Welcome_Message, wallet_created, wallet_message
 from bot.wallet_manager import WalletManager
 from bot.wallets.wallet_handlers import eth_wm
+from aiogram.filters import StateFilter
+from aiogram.fsm.context import FSMContext
+import re
 # start with button 
 @router.callback_query(cb.filter(F.strt == "tostart"))
 async def Start(query : CallbackQuery)->None:
@@ -65,18 +68,17 @@ async def createwallet(query:CallbackQuery):
 
 # For connecting existing wwallet
 @router.callback_query(cb.filter(F.strt == "connect"))
-async def connect_existing_wallet_callback(query: types.CallbackQuery):
-    await query.reply("Please enter your wallet private key:",reply_markup=ForceReply(input_field_placeholder="0x..../asjdh...."))
+async def connect_existing_wallet_callback(query: types.CallbackQuery, state: FSMContext):
+    await query.message.reply("Please enter your wallet private key:",reply_markup=ForceReply(input_field_placeholder="0x..../asjdh...."))
+    await state.set_state('connect_existing_wallet')
 
-@router.message(StateFilter(WalletState.connect_wallet))
-async def connect_existing_wallet_callback2(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    network = data.get("network")
+@router.message(StateFilter('connect_existing_wallet'))
+async def connect_existing_wallet_callback2(message: types.Message):
+    
     address = message.text
     
     if not re.match("^(0x)?[0-9a-fA-F]{64}$", address):
-        await message.reply("Invalid private key format. Please enter a valid private key.",reply_markup=back_to_main_kb())
-        await state.set_state(None)
+        await message.reply("Invalid private key format. Please enter a valid private key.",reply_markup=backtotophome.as_markup())
         return
 
 
@@ -85,38 +87,12 @@ async def connect_existing_wallet_callback2(message: types.Message, state: FSMCo
     wallet_data = {}
     
     
-    wallet_data['encrypted_seed'] = eth_test_wm.encrypt_seed(address)
-    wallet_data['name'] = data['wallet_name']
-    wallet_data['address'] = eth_test_wm.get_eth_address(address)
-    wallet_data['network'] = network
+    wallet_data['encrypted_seed'] = eth_wm.encrypt_seed(address)
+    wallet_data['address'] = eth_wm.get_eth_address(address)
     
     wallet = await add_wallet(message.from_user.id,wallet_data,db)
-    if network == "ethereum":
-        settings_data = default_eth_settings
-    elif network == "bsc":
-        settings_data = default_bsc_settings
-    else:
-        settings_data = default_arb_settings
-    await add_user_settings(message.from_user, settings_data, db)
-    user = await get_user_by_chat_id(message.from_user.id, db)
-    status = ""
-    if not (user.paid or user.holds_token) and "eth" in network:
-        wallet_address = wallet_data['address']
-        eth_uni_m.address = eth_uni_m.w3.to_checksum_address(wallet_address) 
-        balance = eth_uni_m.get_token_balance(eth_uni_m.w3.to_checksum_address(HOLDING_TOKEN_ADDRESS))
-        balance = eth_uni_m.w3.from_wei(balance,"ether")
-        
-        if balance>=HOLDING_QUANTITY:
-            data = {
-            "wallet_address": wallet.wallet_address,
-            "timestamp": datetime.datetime.now(),
-            "token_address": HOLDING_TOKEN_ADDRESS,
-            "amount" : HOLDING_QUANTITY,
-            "tx_hash": "0x"
-            }
-            await add_holding_buy(user.chat_id, data, db)
-            # await update_user_holdT_status(user.chat_id, True, db)
-            status = f"🎉 Good news! It seems that your wallet already holds {HOLDING_QUANTITY} of {HOLDING_TOKEN_NAME} 🪙, meeting our criteria 📋. Now, you can enjoy full access to all the amazing features of the bot 🤖! Happy trading 📈 and make the most out of it! 😃🚀"
-    response = f'''✅ Added new wallet:\n\nName: {wallet_data['address']}\nChain: {network}\nAddress: `{wallet_data['address']}`\n\n{status}'''
-    await message.answer(response,parse_mode="MARKDOWN",reply_markup=back_to_main_kb())
-    await state.set_state(None)
+    
+    
+    # await update_user_holdT_status(user.chat_id, True, db)
+    response = f'''✅ Added new wallet:\n\nChain: ETH \nAddress: `{wallet_data['address']}`\n\n'''
+    await message.answer(response,parse_mode="MARKDOWN",reply_markup=backtotophome.as_markup())
