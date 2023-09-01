@@ -5,6 +5,7 @@ from bot.db_client import db
 from bot.keyboards.btn import *
 from aiogram import F
 from database.wallet_functions import user_has_wallet, add_wallet, delete_wallet_by_name, get_active_wallets
+from database.claim_functions import claimed
 from bot.messages.messages import Welcome_Message, wallet_created, wallet_message
 from bot.wallet_manager import WalletManager
 from bot.wallets.wallet_handlers import eth_wm
@@ -21,6 +22,8 @@ async def Start(query : CallbackQuery)->None:
 # for claiming
 @router.callback_query(cb.filter(F.strt == "Claim"))
 async def claiming(query: CallbackQuery)->None:
+    claim = await claimed(query.from_user, db)
+       
     await query.bot.delete_message(chat_id=query.message.chat.id , message_id=query.message.message_id)
     await query.message.answer("1):your not qualified to claim \n 2): you have claimed already \n 3): your claim is in process \n 4): you have successfully claimed)" , reply_markup=backtotophome.as_markup())
 

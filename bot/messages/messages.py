@@ -40,3 +40,17 @@ def wallet_created(*args):
     ⚠️ Make sure to save this mnemonic phrase OR private key using pen and paper only. Do NOT copy-paste it anywhere. You could also import it to your Metamask/Trust Wallet. After you finish saving/importing the wallet credentials, delete this message. The bot will not display this information again.'''
     return Wallet_Created_Message
 
+def ifClaim(claimed):
+    if not claimed:
+        message = f'''Pepetricia’s Sniperbot 💕 🐸  
+
+🚫👛 Oh no! It looks like you can not claim yet. 🤔
+💼 Before claiming make sure the following : 
+    1. You cannot reclaim within 24 hours so have patience my child. 🌊🐸🎯💸🚀'''
+
+    else:
+        message = f'''Pepetricia’s Sniperbot 💕 🐸  
+
+🚫👛 Oh no! It looks like you can not claim yet. 🤔
+💼 Before claiming make sure the followings : 
+    1. If you are not a holder then let's buy some XYZ token to claim reward. 💸🌊🐸🎯'''
