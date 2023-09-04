@@ -51,6 +51,6 @@ def ifClaim(claimed):
     else:
         message = f'''Pepetricia’s Sniperbot 💕 🐸  
 
-🚫👛 Oh no! It looks like you can not claim yet. 🤔
+🚫👛 Great! Your transaction is initiated you'll be notified soon . 🎉💸
 💼 Before claiming make sure the followings : 
-    1. If you are not a holder then let's buy some XYZ token to claim reward. 💸🌊🐸🎯'''
+    1. If you are not a holder then let's buy some XYZ token to claim reward. 🌊🐸🎯'''
