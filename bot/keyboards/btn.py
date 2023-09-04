@@ -27,8 +27,9 @@ def getWalletKeyboard(Has_wallet):
     walletdecisionkeyboard = InlineKeyboardBuilder()
     if Has_wallet:
         walletdecisionkeyboard.button(text="🗑 Delete Wallet" , callback_data=cb(strt="deletewallet" , end=11).pack())
+        walletdecisionkeyboard.button(text="🏧 Widthraw Balance" , callback_data=cb(strt="widthdrawBalance" , end=111).pack())
         walletdecisionkeyboard.add(backToMainMenu)
-        walletdecisionkeyboard.adjust(1,1)
+        walletdecisionkeyboard.adjust(2,1)
     else:
         walletdecisionkeyboard.button(text="🔑 Generate New Wallet", callback_data=cb(strt="generate", end=12).pack())
         walletdecisionkeyboard.button(text="🔗 Connect Existing Wallet", callback_data=cb(strt="connect", end=13).pack())

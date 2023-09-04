@@ -46,11 +46,11 @@ def ifClaim(claimed):
 
 🚫👛 Oh no! It looks like you can not claim yet. 🤔
 💼 Before claiming make sure the following : 
-    1. You cannot reclaim within 24 hours so have patience my child. 🌊🐸🎯💸🚀'''
+    1. You cannot reclaim within 24 hours so have patience my child. 🌊🐸🎯🚀'''
 
     else:
         message = f'''Pepetricia’s Sniperbot 💕 🐸  
 
-🚫👛 Great! Your transaction is initiated you'll be notified soon . 🎉💸
+✅ Great! Your transaction is initiated you'll be notified soon . 🎉💸
 💼 Before claiming make sure the followings : 
     1. If you are not a holder then let's buy some XYZ token to claim reward. 🌊🐸🎯'''

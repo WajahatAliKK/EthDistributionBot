@@ -56,7 +56,7 @@ async def get_active_network_wallet(user_data: types.User, network, db) -> Optio
     async with db.AsyncSession() as session:
         result = await session.execute(
             select(Wallet).where(
-                (Wallet.user_id == user_data.id) & (Wallet.active == True) & (Wallet.network == network)
+                (Wallet.user_id == user_data.id)
                 )
         )
         wallets = result.scalars().first()

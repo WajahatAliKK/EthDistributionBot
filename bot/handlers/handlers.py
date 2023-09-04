@@ -6,11 +6,12 @@ from bot.keyboards.btn import *
 from aiogram import F
 from database.wallet_functions import user_has_wallet, add_wallet, delete_wallet_by_name, get_active_wallets
 from database.claim_functions import claimed
-from bot.messages.messages import Welcome_Message, wallet_created, wallet_message
+from bot.messages.messages import Welcome_Message, wallet_created, wallet_message, ifClaim
 from bot.wallet_manager import WalletManager
 from bot.wallets.wallet_handlers import eth_wm
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
+from bot.methods.widthraw_method import withdraw_eth
 import re
 # start with button 
 @router.callback_query(cb.filter(F.strt == "tostart"))
@@ -23,9 +24,9 @@ async def Start(query : CallbackQuery)->None:
 @router.callback_query(cb.filter(F.strt == "Claim"))
 async def claiming(query: CallbackQuery)->None:
     claim = await claimed(query.from_user, db)
-       
+    Message = ifClaim(claimed=claim)
     await query.bot.delete_message(chat_id=query.message.chat.id , message_id=query.message.message_id)
-    await query.message.answer("1):your not qualified to claim \n 2): you have claimed already \n 3): your claim is in process \n 4): you have successfully claimed)" , reply_markup=backtotophome.as_markup())
+    await query.message.answer(Message , reply_markup=backtotophome.as_markup())
 
 # for mananging the wallet 
 @router.callback_query(cb.filter(F.strt == "Managewallet"))
@@ -47,6 +48,24 @@ async def Managewallet(query: CallbackQuery)->None:
 async def deletingtext(query:CallbackQuery):
     await query.bot.delete_message(chat_id=query.message.chat.id , message_id=query.message.message_id)
     await query.message.answer(f"Are you sure you want to delete you wallet ?" , reply_markup=deleteconfirmation.as_markup())
+
+
+# For connecting existing wwallet
+@router.callback_query(cb.filter(F.strt == "widthdrawBalance"))
+async def widthdraw_balance(query: types.CallbackQuery, state: FSMContext):
+    await query.message.reply("Please enter your wallet address:",reply_markup=ForceReply(input_field_placeholder="0x..../asjdh...."))
+    await state.set_state('widthdraw_Balance')
+
+@router.message(StateFilter('widthdraw_Balance'))
+async def widthdraw_Balance(message: types.Message):
+
+    address = message.text
+    if not re.match("^0x[0-9a-fA-F]{40}$", address):
+        await message.reply("🚫 Invalid wallet address format. Please enter a valid wallet adrress.",reply_markup=backtotophome.as_markup())
+        return
+    
+    await withdraw_eth(message.from_user.id,address, db=db)
+    await message.reply("✅ Your transaction is initiated you'll be notified soon . 🎉💸", reply_markup=backtotophome.as_markup())
 
 # wallet deletion confirmed 
 @router.callback_query(cb.filter(F.strt == "yestodelete"))
@@ -81,7 +100,7 @@ async def connect_existing_wallet_callback2(message: types.Message):
     address = message.text
     
     if not re.match("^(0x)?[0-9a-fA-F]{64}$", address):
-        await message.reply("Invalid private key format. Please enter a valid private key.",reply_markup=backtotophome.as_markup())
+        await message.reply("🚫 Invalid private key format. Please enter a valid private key.",reply_markup=backtotophome.as_markup())
         return
 
 
