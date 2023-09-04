@@ -18,8 +18,8 @@ from bot.callback_factory.callback import cb
 backToMainMenu = InlineKeyboardButton(text='🔙 Back to Main Menu', callback_data=cb(strt="tostart" , end=11).pack())
 # start menu button 
 startKeyboard = InlineKeyboardBuilder()
-startKeyboard.button(text="Manage Wallet" ,callback_data=cb(strt="Managewallet", end=11).pack())
-startKeyboard.button(text="Claim" , callback_data=cb(strt="Claim", end=11).pack())
+startKeyboard.button(text="💼 Manage Wallet" ,callback_data=cb(strt="Managewallet", end=11).pack())
+startKeyboard.button(text="🛄 Claim" , callback_data=cb(strt="Claim", end=13).pack())
 startKeyboard.adjust(2)
 
 # wallet menu buttons 

@@ -23,7 +23,7 @@ def wallet_message(wallet,balance):
                       💰 *Available Balance:* {balance} *ETH*\n
                       📬 *Wallet Address:* `{wallet.wallet_address}`\n\n"'''
     else:
-        message = f'''Pepetricia’s Sniperbot 💕 🐸  
+        message = f'''
 
 🚫👛 Oh no! It looks like you don't have an ETH wallet set up yet. 🤔
 💼 Before diving deep into the token pool or making payments, you'll need to set up your ETH wallet. 🌊💸
@@ -42,15 +42,17 @@ def wallet_created(*args):
 
 def ifClaim(claimed):
     if not claimed:
-        message = f'''Pepetricia’s Sniperbot 💕 🐸  
-
+        message = f'''
 🚫👛 Oh no! It looks like you can not claim yet. 🤔
 💼 Before claiming make sure the following : 
-    1. You cannot reclaim within 24 hours so have patience my child. 🌊🐸🎯🚀'''
+
+1. You cannot reclaim within 24 hours so have patience my child. 🌊
+
+2. If you are not a holder then let's buy some XYZ token to claim reward.🎯'''
 
     else:
-        message = f'''Pepetricia’s Sniperbot 💕 🐸  
-
+        message = f'''
 ✅ Great! Your transaction is initiated you'll be notified soon . 🎉💸
-💼 Before claiming make sure the followings : 
-    1. If you are not a holder then let's buy some XYZ token to claim reward. 🌊🐸🎯'''
+'''
+        
+    return message

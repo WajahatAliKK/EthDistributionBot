@@ -24,7 +24,8 @@ async def Start(query : CallbackQuery)->None:
 @router.callback_query(cb.filter(F.strt == "Claim"))
 async def claiming(query: CallbackQuery)->None:
     claim = await claimed(query.from_user, db)
-    Message = ifClaim(claimed=claim)
+    Message = ifClaim(claimed=True)
+    
     await query.bot.delete_message(chat_id=query.message.chat.id , message_id=query.message.message_id)
     await query.message.answer(Message , reply_markup=backtotophome.as_markup())
 

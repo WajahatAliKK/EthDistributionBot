@@ -1,18 +1,19 @@
 import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from .models import Claims
 
 async def claimed(user_id, db):
-    async with db() as session:
+    async with db.AsyncSession() as session:
         claim = await session.execute(
-            db.query(Claims).filter(Claims.user_id == user_id).first()
+            select(Claims).filter(Claims.user_id == user_id)
         )
         if claim:
-            return claim.scalar().claimed
+            return claim.scalar_one_or_none()
         return False
 
 async def add_claim(user_id, claim_data, db):
-    async with db() as session:
+    async with db.AsyncSession() as session:
         claim = Claims(**claim_data, user_id=user_id)
         session.add(claim)
         await session.commit()
@@ -20,9 +21,9 @@ async def add_claim(user_id, claim_data, db):
         return claim
 
 async def change_state(user_id, db):
-    async with db() as session:
+    async with db.AsyncSession() as session:
         claim = await session.execute(
-            db.query(Claims).filter(Claims.user_id == user_id).first()
+            select(Claims).filter(Claims.user_id == user_id).first()
         )
         if claim:
             claim = claim.scalar()
