@@ -56,3 +56,4 @@ async def claim(user_id, db):
             print("Claim successful")
         else:
             print("Claim failed")
+        return transaction_hash
