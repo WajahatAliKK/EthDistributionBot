@@ -33,12 +33,8 @@ async def claim(user_id, db):
         private_key = eth_wm.decrypt_seed(user_wallet.wallet_encrypted_seed)
         account = w3.eth.account.from_key(private_key)
 
-        # Unlock the account
-        unlock_duration = 300  # Replace with the desired unlock duration in seconds
-        w3.geth.personal.unlock_account(account.address, private_key, unlock_duration)
-
         # Call the claim function
-        transaction_data = contract.functions.claim().buildTransaction({
+        transaction_data = contract.functions.claim().build_transaction({
             'chainId': 1,  # Replace with the appropriate chain ID
             'gas': 200000,  # Replace with the appropriate gas value
             'gasPrice': w3.to_wei('5', 'gwei'),  # Replace with the desired gas price
